@@ -35,6 +35,10 @@ public class EmployeeServiceImpl {
                         id));
     }
 
+    public Optional<Employee> getEmployeeByIdOptional(long id) {
+        return employeeRepository.findById(id);
+    }
+
     public Employee updateEmployee(Employee updatedEmployee) {
         return employeeRepository.save(updatedEmployee);
     }

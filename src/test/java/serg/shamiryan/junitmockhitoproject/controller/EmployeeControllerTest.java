@@ -20,6 +20,7 @@ import serg.shamiryan.junitmockhitoproject.model.Employee;
 import serg.shamiryan.junitmockhitoproject.service.EmployeeServiceImpl;
 
 import java.util.List;
+import java.util.Optional;
 
 @WebMvcTest(EmployeeController.class)
 class EmployeeControllerTest {
@@ -101,11 +102,70 @@ class EmployeeControllerTest {
         BDDMockito.given(employeeService.getEmployeeById(1)).willReturn(employee);
         //when - action or behaviour we are going to test
         ResultActions result = mockMvc.perform(MockMvcRequestBuilders
-                .get("/api/employees/{id}",id)
+                .get("/api/employees/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(employee)));
         //then - verify the output
         result.andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    @DisplayName("Test for updating employee")
+    public void givenEmployee_whenUpdateEmployee_thenReturnUpdatedEmployee() throws Exception {
+        //given - precondition or setup]
+        long id = 1;
+        BDDMockito.given(employeeService.getEmployeeByIdOptional(id)).willReturn(Optional.of(
+                employee));
+        Employee updatedEmployee = Employee.builder()
+                .firstName("Sergey")
+                .lastName("Shamiryan")
+                .email("sergshamiryan@gmail.com")
+                .build();
+        BDDMockito.given(employeeService
+                        .updateEmployee(ArgumentMatchers.any(Employee.class)))
+                .willAnswer((invocation -> invocation.getArgument(0)));
+        //when - action or behaviour we are going to test
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders
+                .put("/api/employees/{id}", id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(employee)));
+        //then - verify the output
+        result.andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath(
+                        "$.firstName", CoreMatchers.is(updatedEmployee.getFirstName())));
+    }
+
+    @Test
+    @DisplayName("Test for updating employee (Negative Case)")
+    public void givenEmptyOptional_whenUpdateEmployee_thenReturnUpdatedEmployee() throws Exception {
+        //given - precondition or setup]
+        long id = 1;
+        BDDMockito.given(employeeService.getEmployeeByIdOptional(id)).willReturn(Optional.empty());
+        Employee updatedEmployee = Employee.builder()
+                .firstName("Sergey")
+                .lastName("Shamiryan")
+                .email("sergshamiryan@gmail.com")
+                .build();
+        BDDMockito.given(employeeService
+                        .updateEmployee(ArgumentMatchers.any(Employee.class)))
+                .willAnswer((invocation -> invocation.getArgument(0)));
+        //when - action or behaviour we are going to test
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders
+                .put("/api/employees/{id}", id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(employee)));
+        //then - verify the output
+        result.andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Test for deleting an employee")
+    public void given_when_then() {
+        //given - precondition or setup
+        //when - action or behaviour we are going to test
+        //then - verify the output
     }
 }
