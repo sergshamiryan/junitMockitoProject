@@ -129,7 +129,7 @@ class EmployeeServiceImplTest {
 
     @Test
     @DisplayName("Test for deleting an employee")
-    public void given_when_then() {
+    public void givenId_whenDeleteById_thenRemoveEmployeeObject() {
         //given - precondition or setup
         willDoNothing().given(employeeRepository).deleteById(employee.getId());
         //when - action or behaviour we are going to test
