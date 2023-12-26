@@ -163,9 +163,15 @@ class EmployeeControllerTest {
 
     @Test
     @DisplayName("Test for deleting an employee")
-    public void given_when_then() {
+    public void givenEmployeeId_when_then() throws Exception {
         //given - precondition or setup
+        long id = 1;
+        BDDMockito.willDoNothing().given(employeeService).deleteEmployee(id);
         //when - action or behaviour we are going to test
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders
+                .delete("/api/employees/{id}", id));
         //then - verify the output
+        result.andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 }
